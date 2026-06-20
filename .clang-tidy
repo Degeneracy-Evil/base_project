@@ -14,7 +14,7 @@ Checks: >
   -performance-avoid-endl,
   -performance-enum-size
 
-WarningsAsErrors: ''
+WarningsAsErrors: '*'
 
 HeaderFilterRegex: '^(include|src)/.*\.(hpp|cpp)$'
 
