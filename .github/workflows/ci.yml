@@ -22,5 +22,11 @@ jobs:
         with:
           xmake-version: latest
 
+      - name: Build
+        run: xmake build
+
+      - name: Generate compile_commands.json
+        run: xmake project -k compile_commands build
+
       - name: Run quality checks
-        run: utils/check.sh
+        run: utils/check.sh --skip-build
