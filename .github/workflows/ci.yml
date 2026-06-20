@@ -11,11 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install toolchain
+      - name: Install LLVM toolchain
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang clang-format clang-tidy lld libc++-dev
+          wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- 18
+          sudo apt-get install -y clang-format-18 clang-tidy-18 lld-18 libc++-18-dev libc++abi-18-dev
           sudo apt-get install -y libunwind-dev
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+          sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-18 100
+          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-18 100
 
       - name: Install xmake
         uses: xmake-io/github-action-setup-xmake@v1
