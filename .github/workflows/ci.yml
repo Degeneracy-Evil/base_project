@@ -18,24 +18,21 @@ jobs:
           sudo apt-get install -y \
             build-essential \
             clang-18 clang-format-18 clang-tidy-18 lld-18 \
-            libc++-18-dev libc++abi-18-dev
-          sudo apt-get install -y libunwind-dev
-          sudo mkdir -p /usr/lib/llvm-18/include/c++
-          sudo ln -sf /usr/include/c++/v1 /usr/lib/llvm-18/include/c++/v1
+            libc++-18-dev libc++abi-18-dev \
+            libunwind-18-dev
 
-      - name: Diagnose libc++
+      - name: Verify libc++
         run: |
-          clang++-18 --version
-          echo '#include <iostream>' | clang++-18 -std=c++23 -stdlib=libc++ -x c++ - -v -fsyntax-only
-          dpkg -L libc++-18-dev || true
+          dpkg -L libc++-18-dev | grep '/iostream$' || true
           ls -l /usr/include/c++/v1/iostream || true
+          echo '#include <iostream>' | clang++-18 -std=c++23 -stdlib=libc++ -x c++ - -v -fsyntax-only
 
       - name: Install xmake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
 
-      - name: Configure
+      - name: Configure xmake
         run: |
           xmake f -c -y --toolchain=clang --cc=clang-18 --cxx=clang++-18 --ld=clang++-18
 
