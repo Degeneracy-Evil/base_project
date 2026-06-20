@@ -18,9 +18,9 @@ jobs:
           sudo apt-get install -y libunwind-dev
 
       - name: Install xmake
-        run: |
-          curl -fsSL https://xmake.io/shget.text | bash
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
 
       - name: Run quality checks
         run: utils/check.sh
