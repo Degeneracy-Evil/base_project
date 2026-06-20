@@ -17,24 +17,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             build-essential \
-            clang-18 clang-format-18 clang-tidy-18 lld-18 \
-            libc++-18-dev libc++abi-18-dev \
-            libunwind-18-dev
-
-      - name: Verify libc++
-        run: |
-          dpkg -L libc++-18-dev | grep '/iostream$' || true
-          ls -l /usr/include/c++/v1/iostream || true
-          echo '#include <iostream>' | clang++-18 -std=c++23 -stdlib=libc++ -x c++ - -v -fsyntax-only
+            clang clang-format clang-tidy lld \
+            libc++-dev libc++abi-dev
 
       - name: Install xmake
         uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: latest
 
-      - name: Configure xmake
-        run: |
-          xmake f -c -y --toolchain=clang --cc=clang-18 --cxx=clang++-18 --ld=clang++-18
-
       - name: Build
-        run: xmake build -vD
+        run: xmake build
+
+      - name: Generate compile_commands.json
+        run: xmake project -k compile_commands build
+
+      - name: Run quality checks
+        run: utils/check.sh --skip-build
