@@ -25,11 +25,11 @@ jobs:
         with:
           xmake-version: latest
 
+      - name: Configure
+        run: xmake f -c -y --toolchain=clang
+
       - name: Build
         run: xmake build
 
-      - name: Generate compile_commands.json
-        run: xmake project -k compile_commands build
-
       - name: Run quality checks
-        run: utils/check.sh --skip-build
+        run: utils/check.sh
