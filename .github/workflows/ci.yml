@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang clang-format clang-tidy lld libc++-dev libunwind-dev
+
+      - name: Install xmake
+        run: |
+          curl -fsSL https://xmake.io/shget.text | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Run quality checks
+        run: utils/check.sh
