@@ -9,11 +9,7 @@ xmake build          # 构建
 xmake -r             # 重新构建
 ```
 
-生成 `compile_commands.json`（供 clang-tidy 等工具使用）：
-
-```bash
-xmake project -k compile_commands build
-```
+`compile_commands.json` 在构建后自动生成到 `build/`（供 clang-tidy / clangd 使用），无需手动运行。
 
 ## 运行
 
@@ -34,6 +30,9 @@ utils/
   check.sh        一键检查（clang-format + clang-tidy + build + tests）
 .githooks/
   pre-commit      转发到 check.sh --hook
+.github/
+  workflows/
+    ci.yml        CI 流水线（push/PR 触发 check.sh）
 output/           输出文件 (gitignore)
 ```
 
@@ -41,9 +40,11 @@ output/           输出文件 (gitignore)
 
 - C++23 / xmake / clang++ / libc++ / lld / compiler-rt
 - 编译选项 -Wall -Wextra -Werror，零 warning
+- clang-tidy `WarningsAsErrors: '*'`，静态分析零容忍
 - `<cctype>` 函数传参必须 `static_cast<unsigned char>()`，否则 signed char 有 UB
-- `compile_commands.json` 生成命令统一为 `xmake project -k compile_commands build`
-- pre-commit hook 通过 `.githooks/pre-commit` 转发到 `utils/check.sh --hook`；首次克隆后需执行 `git config core.hooksPath .githooks`
+- `compile_commands.json` 由 `after_build` 钩子自动生成，`xmake -r` 后也会重新生成
+- 行尾统一 LF（`.gitattributes` 控制）
+- pre-commit hook 通过 `.githooks/pre-commit` 转发到 `utils/check.sh --hook`；首次 `xmake build` 自动配置 `core.hooksPath`
 
 ## 开发记录规则
 

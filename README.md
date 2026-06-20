@@ -2,6 +2,18 @@
 
 个人开源项目基础模板 — C++23 + xmake + clang 工具链。
 
+## 前置条件
+
+| 工具 | 最低版本 | 说明 |
+|------|---------|------|
+| clang | 17 | C++23 编译器 |
+| xmake | 2.8 | 构建系统 |
+| lld | — | 链接器 |
+| libc++ | — | C++ 标准库 (随 clang 提供) |
+| clang-format | — | 代码格式化 (随 clang 提供) |
+| clang-tidy | — | 静态分析 (随 clang 提供) |
+| perl | — | check.sh 空白修复 |
+
 ## 构建
 
 ```bash
@@ -9,11 +21,7 @@ xmake build      # 构建
 xmake -r         # 重新构建
 ```
 
-生成 `compile_commands.json`（供 clang-tidy / clangd 等工具使用）：
-
-```bash
-xmake project -k compile_commands build
-```
+`compile_commands.json` 在构建后自动生成到 `build/`（供 clang-tidy / clangd 使用），无需手动运行。
 
 ## 首次克隆后设置
 
@@ -46,8 +54,15 @@ utils/
   check.sh        统一质量检查脚本（--hook 模式 = pre-commit；默认 = 全量检查）
 .githooks/
   pre-commit      转发到 check.sh --hook
+.github/
+  workflows/
+    ci.yml        CI 流水线（push/PR 触发 check.sh）
 output/           输出文件 (gitignore)
 ```
+
+## CI
+
+push 到 `main` 或提交 PR 时，GitHub Actions 自动运行 `utils/check.sh` 全量检查。
 
 ## 技术栈
 
